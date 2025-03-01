@@ -47,8 +47,8 @@ public class lift extends SubsystemBase {
   m_lift1 = new ThriftyNova(0);
   m_lift1.setBrakeMode(true); // brake mode
   m_lift1.setInverted(false); // not inverted 
-  m_lift1.setRampUp(0.25);    // 1/4 second ramp up
-  m_lift1.setRampDown(0.25);  // tiny ramp dowm
+  m_lift1.setRampUp(0.5);    // 1/4 second ramp up
+  m_lift1.setRampDown(0.5);  // tiny ramp dowm
   m_lift1.setMaxOutput(.25, 0.5);  // full power for forward because the 
                               // system is fighting against gravity
                               // limits power on reverse because the 
@@ -60,18 +60,18 @@ public class lift extends SubsystemBase {
                                              // on supply side
       
   m_lift1.useEncoderType(EncoderType.INTERNAL); // use internal NEO encoder
-  m_lift1.usePIDSlot(PIDSlot.SLOT0);           // use the first PID slot
+  m_lift1.usePIDSlot(PIDSlot.SLOT1);           // use the first PID slot
       
     // Configure the first PID slot
-  m_lift1.pid0.setP(0.008); 
-  m_lift1.pid0.setI(0);
-  m_lift1.pid0.setD(0.1);
-  m_lift1.pid0.setFF(0);
+  m_lift1.pid1.setP(0.005); 
+  m_lift1.pid1.setI(0);
+  m_lift1.pid1.setD(0.1);
+  m_lift1.pid1.setFF(0);
 
   m_lift2 = new ThriftyNova(1);
   m_lift2.setBrakeMode(false);
   m_lift2.follow(0);
-  m_lift2.setInverted(true);
+  //m_lift2.setInverted(true);
   
   m_intake = new ThriftyNova(4);
     m_intake.setBrakeMode(true); // brake mode
@@ -123,9 +123,9 @@ public class lift extends SubsystemBase {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
         // slot, as it will default to slot 0.
-        .p(0.15)
+        .p(0.02)
         .i(0)
-        .d(0)
+        .d(.01)
         .outputRange(-0.35, 0.35);
     wristConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -231,6 +231,7 @@ public class lift extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm angle", getArm());
     SmartDashboard.putNumber("Wrist angle", getWrist());
+   // SmartDashboard.putBoolean("LiftP", m_lift1.pid0.setP)
     }
 
 }

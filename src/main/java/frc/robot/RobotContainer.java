@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 import frc.robot.subsystems.lift;
+import frc.robot.subsystems.winch;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -36,6 +37,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final lift m_lift = new lift();
+  private final winch m_winch = new winch();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -59,7 +61,7 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+    //m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
   }
 
   /**
@@ -78,19 +80,19 @@ public class RobotContainer {
             m_robotDrive));
 
     new JoystickButton(m_driverController, Button.kSquare.value)
-        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.placeL4(), m_lift));
 
     new JoystickButton(m_driverController, Button.kCircle.value)
         .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
 
     new JoystickButton(m_driverController, Button.kTriangle.value)
-        .whileTrue(new RunCommand(() -> m_lift.Intake(),m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.placeL2(),m_lift));
 
     new JoystickButton(m_driverController, Button.kCross.value)
-        .whileTrue(new RunCommand(() -> m_lift.stopIntake(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.placeL3(), m_lift));
 
     new JoystickButton(m_driverController, Button.kL1.value)
-        .whileTrue(new RunCommand(() -> m_lift.ready(), m_lift));
+        .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
   }
 
   /**
