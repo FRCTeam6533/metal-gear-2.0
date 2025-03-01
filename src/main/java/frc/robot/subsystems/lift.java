@@ -6,8 +6,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.thethriftybot.ThriftyNova;
@@ -143,20 +141,8 @@ public class lift extends SubsystemBase {
 
   }
 
-  public void LiftLow() {
-    m_lift1.setPosition(500);    
-  }
-  
-  public void LiftMid() {
-    m_lift1.setPosition(750);
-  }
-
   public void ResetLift() {
     m_lift1.setPosition(0);
-  }
-
-  public double liftheight() {
-    return m_lift1.getPosition();
   }
 
   public void ResetIntake() {
@@ -183,15 +169,47 @@ public class lift extends SubsystemBase {
     m_lift1.setPosition(pos);
   }
 
-  public void pickup() {
-    Liftheight(350);
-    ArmAng(25);
-    Wrist(-43);
+  public double getArm() {
+    return m_armEncoder.getPosition();
   }
-  public void placehigh() {
+
+  public double getWrist() {
+    return m_wristEncoder.getPosition();
+  }
+
+  public double getheight() {
+    return m_lift1.getPosition();
+  }
+
+  public void pickup() {
+    Liftheight(350); // min 0, max 2000
+    ArmAng(30); //to swing to place position, move in neg direction
+    Wrist(-70); //to swing to place position, move in neg direction, almost straight
+  }
+  public void placeL4() {
     Liftheight(1500);
-    ArmAng(-20);
-    Wrist(-43);
+    if (getheight() > 700) ArmAng(-20);
+    if (getheight() > 700) Wrist(-70);
+  }
+
+  public void placeL3() {
+    Liftheight(1000);
+    if (getheight() > 700) ArmAng(-20);
+    if (getheight() > 700) Wrist(-70);
+  }
+
+  public void placeL2() {
+    Liftheight(800);
+    if (getheight() > 700) ArmAng(-20);
+    if (getheight() > 700) Wrist(-70);
+    if (getArm() < -15) Liftheight(500);
+  }
+
+  public void placeL1() {
+    Liftheight(800);
+    if (getheight() > 700) ArmAng(-20);
+    if (getheight() > 700) Wrist(-70);
+    if (getArm() < -15) Liftheight(0);
   }
 
   public void ready() {
@@ -209,13 +227,10 @@ public class lift extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-    SmartDashboard.putNumber("height", m_lift1.getPosition());
+    SmartDashboard.putNumber("height", getheight());
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm angle", m_armEncoder.getPosition());
-    SmartDashboard.putNumber("Wrist angle", m_wristEncoder.getPosition());
-  
+    SmartDashboard.putNumber("Arm angle", getArm());
+    SmartDashboard.putNumber("Wrist angle", getWrist());
     }
 
 }
-

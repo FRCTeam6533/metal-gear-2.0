@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 import frc.robot.subsystems.lift;
-import frc.robot.subsystems.Arm;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,7 +36,6 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final lift m_lift = new lift();
-  private final Arm m_arm = new Arm();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -60,6 +58,8 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+
+    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
   }
 
   /**
@@ -81,7 +81,7 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
 
     new JoystickButton(m_driverController, Button.kCircle.value)
-        .whileTrue(new RunCommand(() -> m_lift.placehigh(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
 
     new JoystickButton(m_driverController, Button.kTriangle.value)
         .whileTrue(new RunCommand(() -> m_lift.Intake(),m_lift));

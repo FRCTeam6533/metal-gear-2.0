@@ -11,7 +11,7 @@ public class Elevator extends Command {
   /** Creates a new Elevator. */
   public Elevator() {
     // Use addRequirements() here to declare subsystem dependencies.
-    final lift m_lift = new lift();
+    //final lift m_lift = new lift();
   }
 
   // Called when the command is initially scheduled.
