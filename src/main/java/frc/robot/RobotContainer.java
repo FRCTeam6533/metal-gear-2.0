@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
@@ -40,13 +41,14 @@ public class RobotContainer {
   private final winch m_winch = new winch();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button bindings
+    m_lift.ResetArm();
     configureButtonBindings();
 
     // Configure default commands
@@ -55,13 +57,13 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getTwist(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
 
-    //m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
   }
 
   /**
@@ -83,7 +85,7 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_lift.placeL4(), m_lift));
 
     new JoystickButton(m_driverController, Button.kCircle.value)
-        .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
 
     new JoystickButton(m_driverController, Button.kTriangle.value)
         .whileTrue(new RunCommand(() -> m_lift.placeL2(),m_lift));
@@ -93,6 +95,10 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, Button.kL1.value)
         .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
+
+    new JoystickButton(m_driverController, Button.kOptions.value)
+        .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
+
   }
 
   /**
