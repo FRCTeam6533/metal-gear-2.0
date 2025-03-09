@@ -42,6 +42,7 @@ public class RobotContainer {
 
   // The driver's controller
   Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
+  Joystick m_operatorController = new Joystick (1);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -81,23 +82,26 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kSquare.value)
+    new JoystickButton(m_operatorController, Button.kSquare.value)
         .whileTrue(new RunCommand(() -> m_lift.placeL4(), m_lift));
 
-    new JoystickButton(m_driverController, Button.kCircle.value)
-        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
+    new JoystickButton(m_operatorController, Button.kCircle.value)
+        .whileTrue(new RunCommand(() -> m_lift.placeL3(), m_lift));
 
-    new JoystickButton(m_driverController, Button.kTriangle.value)
+    new JoystickButton(m_operatorController, Button.kTriangle.value)
         .whileTrue(new RunCommand(() -> m_lift.placeL2(),m_lift));
 
-    new JoystickButton(m_driverController, Button.kCross.value)
-        .whileTrue(new RunCommand(() -> m_lift.placeL3(), m_lift));
+    new JoystickButton(m_operatorController, Button.kCross.value)
+        .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
 
     new JoystickButton(m_driverController, Button.kL1.value)
         .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
 
     new JoystickButton(m_driverController, Button.kOptions.value)
         .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
+
+    new JoystickButton(m_driverController, Button.kSquare.value)
+        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
 
   }
 
@@ -119,7 +123,7 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        List.of(new Translation2d(1, 0), new Translation2d(2, 0)),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(3, 0, new Rotation2d(0)),
         config);

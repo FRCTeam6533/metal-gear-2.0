@@ -81,8 +81,8 @@ public class lift extends SubsystemBase {
     // Clear errors here
     m_intake.clearErrors();
 
-    m_lift1 = new SparkMax(0, MotorType.kBrushless);
-    m_lift2 = new SparkMax(1, MotorType.kBrushless);
+    m_lift1 = new SparkMax(6, MotorType.kBrushless);
+    m_lift2 = new SparkMax(7, MotorType.kBrushless);
     m_arm = new SparkMax(2, MotorType.kBrushless);
     m_wrist = new SparkMax(3, MotorType.kBrushless);
 
@@ -110,10 +110,10 @@ public class lift extends SubsystemBase {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
         // slot, as it will default to slot 0.
-        .p(0.005)
+        .p(0.05)
         .i(0)
         .d(.1)
-        .outputRange(-0.5, 0.75);
+        .outputRange(-0.5, 0.5);
     lift2Config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
@@ -126,7 +126,7 @@ public class lift extends SubsystemBase {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
         // slot, as it will default to slot 0.
-        .p(0.02)
+        .p(0.01)
         .i(0)
         .d(.01)
         .outputRange(-0.35, 0.35);
@@ -134,7 +134,7 @@ public class lift extends SubsystemBase {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
         // slot, as it will default to slot 0.
-        .p(0.04)
+        .p(0.02)
         .i(0)
         .d(0)
         .outputRange(-1, 1);
@@ -159,6 +159,10 @@ public class lift extends SubsystemBase {
 
   public void Intake() {
     m_intake.set(.25);
+  }
+
+  public void LetGo() {
+    m_intake.set(-.25);
   }
 
   public void stopIntake() {
@@ -190,43 +194,44 @@ public class lift extends SubsystemBase {
   }
 
   public void pickup() {
-    Liftheight(350); // min 0, max 2000
-    ArmAng(30); //to swing to place position, move in neg direction
-    Wrist(-70); //to swing to place position, move in neg direction, almost straight
+    Liftheight(8); // min 0, max 2000
+    ArmAng(10); //to swing to place position, move in neg direction
+    Wrist(-30); //to swing to place position, move in neg direction, almost straight
     Intake();
   }
 
   public void placeL4() {
-    Liftheight(1800);
-    if (getheight() > 700) ArmAng(-62);
-    if (getheight() > 700) Wrist(-50);
-    Intake();
+    Liftheight(47);
+    if (getheight() > 17) ArmAng(-62);
+    if (getheight() > 17) Wrist(-50);
   }
 
   public void placeL3() {
-    Liftheight(1000);
-    if (getheight() > 700) ArmAng(-20);
-    if (getheight() > 700) Wrist(-70);
+    Liftheight(20);
+    if (getheight() > 17) ArmAng(-52);
+    if (getheight() > 17) Wrist(-18);
+    if (getArm() < -30) Liftheight(0);
   }
 
   public void placeL2() {
-    Liftheight(800);
-    if (getheight() > 700) ArmAng(-20);
-    if (getheight() > 700) Wrist(-70);
-    if (getArm() < -15) Liftheight(500);
+    Liftheight(20);
+    if (getheight() > 17) ArmAng(-75);
+    if (getheight() > 17) Wrist(14);
+    if (getArm() < -50) Liftheight(0);
   }
 
   public void placeL1() {
-    Liftheight(800);
-    if (getheight() > 700) ArmAng(-20);
-    if (getheight() > 700) Wrist(-70);
-    if (getArm() < -15) Liftheight(0);
+    Liftheight(20);
+    if (getheight() > 17) ArmAng(-75);
+    if (getheight() > 17) Wrist(-7);
+    if (getArm() < -50) Liftheight(0);
+    if (getArm() < -50 && getheight() < 5 && getWrist() > 0) LetGo();
   }
 
   public void ready() {
-    Liftheight(700);
-    ArmAng(0);
-    Wrist(-20);
+    Liftheight(20);
+    ArmAng(10);
+    Wrist(-30);
   }
   public void ResetArm() {
     m_armEncoder.setPosition(0);
