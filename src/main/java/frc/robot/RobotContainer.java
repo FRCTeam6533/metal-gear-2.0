@@ -82,25 +82,28 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_operatorController, Button.kSquare.value)
-        .whileTrue(new RunCommand(() -> m_lift.placeL4(), m_lift));
-
-    new JoystickButton(m_operatorController, Button.kCircle.value)
+    new JoystickButton(m_operatorController, Button.kSquare.value) //y button
         .whileTrue(new RunCommand(() -> m_lift.placeL3(), m_lift));
 
-    new JoystickButton(m_operatorController, Button.kTriangle.value)
-        .whileTrue(new RunCommand(() -> m_lift.placeL2(),m_lift));
+    new JoystickButton(m_operatorController, Button.kCircle.value) //a button
+        .whileTrue(new RunCommand(() -> m_lift.placeL2(), m_lift));
 
-    new JoystickButton(m_operatorController, Button.kCross.value)
+    new JoystickButton(m_operatorController, Button.kTriangle.value) //x button
+        .whileTrue(new RunCommand(() -> m_lift.placeL4(),m_lift));
+
+    new JoystickButton(m_operatorController, Button.kCross.value) //b button
         .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
 
     new JoystickButton(m_driverController, Button.kL1.value)
         .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
 
+    new JoystickButton(m_driverController, Button.kTriangle.value) //x button
+        .whileTrue(new RunCommand(() -> m_lift.LetGo(), m_lift));
+
     new JoystickButton(m_driverController, Button.kOptions.value)
         .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
 
-    new JoystickButton(m_driverController, Button.kSquare.value)
+    new JoystickButton(m_driverController, Button.kSquare.value) //y button
         .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
 
   }
