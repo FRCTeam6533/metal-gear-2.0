@@ -5,6 +5,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.hal.ThreadsJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,7 +57,7 @@ public class lift extends SubsystemBase {
     m_intake.setInverted(false); // not inverted 
     m_intake.setRampUp(0.25);    // 1/4 second ramp up
     m_intake.setRampDown(0.25);  // tiny ramp dowm
-    m_intake.setMaxOutput(1, 1);  // full power for forward because the 
+    m_intake.setMaxOutput(.25, .25);  // full power for forward because the 
                               // system is fighting against gravity
                               // limits power on reverse because the 
                               // system is falling with gravity
@@ -70,7 +71,7 @@ public class lift extends SubsystemBase {
     m_intake.usePIDSlot(PIDSlot.SLOT0);           // use the first PID slot
       
     // Configure the first PID slot
-    m_intake.pid0.setP(0.1); 
+    m_intake.pid0.setP(0.00001); 
     m_intake.pid0.setD(0);
 
   // Iterate through errors and check them
@@ -158,7 +159,7 @@ public class lift extends SubsystemBase {
   }
 
   public void Intake() {
-    m_intake.set(.25);
+    m_intake.setPosition(-1000);
   }
 
   public void LetGo() {
@@ -193,6 +194,18 @@ public class lift extends SubsystemBase {
     return m_lift1Encoder.getPosition();
   }
 
+  public double getIntake() {
+    return m_intake.getPosition();
+  }
+
+  public void Pick() {
+    if (getheight() > 15)  
+      pickup();
+      else {
+        ready();
+      }
+  }
+  
   public void pickup() {
     Liftheight(8); // min 0, max 2000
     ArmAng(10); //to swing to place position, move in neg direction
@@ -232,7 +245,22 @@ public class lift extends SubsystemBase {
     Liftheight(20);
     ArmAng(10);
     Wrist(-30);
+    LetGo();
   }
+
+  public void clearLowAlgae() {
+    Liftheight(0);
+    ArmAng(-64);
+    Wrist(-42);
+    LetGo();
+  }
+
+  public void clearHighAlgae() {
+    Liftheight(28);
+    ArmAng(-64);
+    Wrist(-42);
+  }
+
   public void ResetArm() {
     m_armEncoder.setPosition(0);
   }
@@ -247,6 +275,7 @@ public class lift extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm angle", getArm());
     SmartDashboard.putNumber("Wrist angle", getWrist());
+    SmartDashboard.putNumber("Intake", getIntake());
    // SmartDashboard.putBoolean("LiftP", m_lift1.pid0.setP)
     }
 

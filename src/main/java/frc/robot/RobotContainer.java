@@ -64,7 +64,7 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+    //m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
   }
 
   /**
@@ -104,8 +104,13 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
 
     new JoystickButton(m_driverController, Button.kSquare.value) //y button
-        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.Pick(), m_lift));
 
+    new JoystickButton(m_driverController, Button.kCross.value) //b button
+        .whileTrue(new RunCommand(() -> m_lift.clearLowAlgae(), m_lift));
+
+    new JoystickButton(m_driverController, Button.kCircle.value) //a button
+        .whileTrue(new RunCommand(() -> m_lift.clearHighAlgae(), m_lift));        
   }
 
   /**
