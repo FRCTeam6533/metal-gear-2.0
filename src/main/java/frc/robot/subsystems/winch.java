@@ -18,7 +18,7 @@ public class winch extends SubsystemBase {
   private ThriftyNova m_winch;
 
   public winch() {
-    m_winch = new ThriftyNova(0);
+    m_winch = new ThriftyNova(5);
     m_winch.setBrakeMode(true); // brake mode
     m_winch.setInverted(false); // not inverted 
     m_winch.setRampUp(0.25);    // 1/4 second ramp up
