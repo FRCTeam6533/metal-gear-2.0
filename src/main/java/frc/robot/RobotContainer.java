@@ -64,8 +64,9 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    //m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
   }
+  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -104,13 +105,16 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
 
     new JoystickButton(m_driverController, Button.kSquare.value) //y button
-        .whileTrue(new RunCommand(() -> m_lift.Pick(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
 
     new JoystickButton(m_driverController, Button.kCross.value) //b button
         .whileTrue(new RunCommand(() -> m_lift.clearLowAlgae(), m_lift));
 
     new JoystickButton(m_driverController, Button.kCircle.value) //a button
-        .whileTrue(new RunCommand(() -> m_lift.clearHighAlgae(), m_lift));        
+        .whileTrue(new RunCommand(() -> m_lift.clearHighAlgae(), m_lift));  
+        
+    new JoystickButton(m_operatorController, Button.kL1.value)
+        .whileTrue(new RunCommand(() -> m_lift.LetGo(), m_lift));
   }
 
   /**

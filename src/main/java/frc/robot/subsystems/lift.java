@@ -71,7 +71,7 @@ public class lift extends SubsystemBase {
     m_intake.usePIDSlot(PIDSlot.SLOT0);           // use the first PID slot
       
     // Configure the first PID slot
-    m_intake.pid0.setP(0.00001); 
+    m_intake.pid0.setP(0.01); 
     m_intake.pid0.setD(0);
 
   // Iterate through errors and check them
@@ -114,7 +114,7 @@ public class lift extends SubsystemBase {
         .p(0.05)
         .i(0)
         .d(.1)
-        .outputRange(-0.5, 0.5);
+        .outputRange(-0.5, 0.75);
     lift2Config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed loop
@@ -159,7 +159,7 @@ public class lift extends SubsystemBase {
   }
 
   public void Intake() {
-    m_intake.setPosition(-1000);
+    m_intake.set(.35);
   }
 
   public void LetGo() {
@@ -179,7 +179,7 @@ public class lift extends SubsystemBase {
   }
 
   public void Liftheight(double pos) {
-    m_lift1Controller.setReference(pos, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    m_lift1Controller.setReference(pos, ControlType.kPosition, ClosedLoopSlot.kSlot0);  //max 47 at 26.5 inches, 1.77x
   }
 
   public double getArm() {
@@ -199,7 +199,7 @@ public class lift extends SubsystemBase {
   }
 
   public void Pick() {
-    if (getheight() > 15)  
+    if (getheight() > 15) //15/1.77 = 8.5" high
       pickup();
       else {
         ready();
@@ -224,13 +224,15 @@ public class lift extends SubsystemBase {
     if (getheight() > 17) ArmAng(-52);
     if (getheight() > 17) Wrist(-18);
     if (getArm() < -30) Liftheight(0);
+    if (getheight() < 5 && getArm() < -45 && getWrist() > -13) LetGo();
   }
 
   public void placeL2() {
     Liftheight(20);
     if (getheight() > 17) ArmAng(-75);
-    if (getheight() > 17) Wrist(14);
+    if (getheight() > 17) Wrist(-14);
     if (getArm() < -50) Liftheight(0);
+    if (getheight() < 5 && getArm() < -70 && getWrist() > -10) LetGo();
   }
 
   public void placeL1() {
@@ -238,14 +240,13 @@ public class lift extends SubsystemBase {
     if (getheight() > 17) ArmAng(-75);
     if (getheight() > 17) Wrist(-7);
     if (getArm() < -50) Liftheight(0);
-    if (getArm() < -50 && getheight() < 5 && getWrist() > 0) LetGo();
+    if (getArm() < -50 && getheight() < 5 && getWrist() > -10) LetGo();
   }
 
   public void ready() {
     Liftheight(20);
     ArmAng(10);
     Wrist(-30);
-    LetGo();
   }
 
   public void clearLowAlgae() {
@@ -259,6 +260,7 @@ public class lift extends SubsystemBase {
     Liftheight(28);
     ArmAng(-64);
     Wrist(-42);
+    LetGo();
   }
 
   public void ResetArm() {
@@ -275,8 +277,8 @@ public class lift extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm angle", getArm());
     SmartDashboard.putNumber("Wrist angle", getWrist());
-    SmartDashboard.putNumber("Intake", getIntake());
-   // SmartDashboard.putBoolean("LiftP", m_lift1.pid0.setP)
+    //SmartDashboard.putNumber("Intake", getIntake());
+    //SmartDashboard.putBoolean("LiftP", m_lift1.pid0.setP)
     }
 
 }
