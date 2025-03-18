@@ -163,7 +163,8 @@ public class lift extends SubsystemBase {
   }
 
   public void LetGo() {
-    m_intake.set(-.25);
+    //m_intake.set(-.25);
+    Wrist(getWrist()-10);
   }
 
   public void stopIntake() {
@@ -217,6 +218,7 @@ public class lift extends SubsystemBase {
     Liftheight(47);
     if (getheight() > 17) ArmAng(-62);
     if (getheight() > 17) Wrist(-50);
+    if (getArm() < 59 && getWrist() < -47) LetGo();
   }
 
   public void placeL3() {
