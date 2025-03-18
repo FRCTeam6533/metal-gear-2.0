@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.subsystems.lift;
@@ -53,6 +54,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     m_lift.ResetArm();
+    // Register Named Commands
+    NamedCommands.registerCommand("pickup", new RunCommand(() -> m_lift.Pick()));
+    NamedCommands.registerCommand("l4Place", new RunCommand(() -> m_lift.placeL4()));
+    NamedCommands.registerCommand("l3Place", new RunCommand(() -> m_lift.placeL3()));
     configureButtonBindings();
 
     // Configure default commands
@@ -68,8 +73,10 @@ public class RobotContainer {
             m_robotDrive));
 
     m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
-  }
 
+        
+    
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -81,6 +88,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
     new JoystickButton(m_driverController, Button.kR1.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
