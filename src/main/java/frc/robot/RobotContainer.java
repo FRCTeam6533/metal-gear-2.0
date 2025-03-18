@@ -25,6 +25,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import frc.robot.subsystems.lift;
 import frc.robot.subsystems.winch;
 
@@ -50,6 +54,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     m_lift.ResetArm();
+    // Register Named Commands
+    NamedCommands.registerCommand("pickup", new RunCommand(() -> m_lift.Pick()));
+    NamedCommands.registerCommand("l4Place", new RunCommand(() -> m_lift.placeL4()));
+    NamedCommands.registerCommand("l3Place", new RunCommand(() -> m_lift.placeL3()));
     configureButtonBindings();
 
     // Configure default commands
@@ -65,8 +73,10 @@ public class RobotContainer {
             m_robotDrive));
 
     m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+
+        
+    
   }
-  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -78,6 +88,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
     new JoystickButton(m_driverController, Button.kR1.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
@@ -123,6 +134,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    /* 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -161,5 +173,10 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    */
+    // This method loads the auto when it is called, however, it is recommended
+    // to first load your paths/autos when code starts, then return the
+    // pre-loaded auto/path
+    return m_robotDrive.getAutonomousCommand("New Auto");
   }
 }
