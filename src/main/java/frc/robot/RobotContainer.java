@@ -55,9 +55,11 @@ public class RobotContainer {
     // Configure the button bindings
     m_lift.ResetArm();
     // Register Named Commands
+    NamedCommands.registerCommand("ready", new RunCommand(() -> m_lift.ready()));
     NamedCommands.registerCommand("pickup", new RunCommand(() -> m_lift.Pick()));
     NamedCommands.registerCommand("l4Place", new RunCommand(() -> m_lift.placeL4()));
     NamedCommands.registerCommand("l3Place", new RunCommand(() -> m_lift.placeL3()));
+    NamedCommands.registerCommand("ReefServo", getAutonomousCommand());
     configureButtonBindings();
 
     // Configure default commands
@@ -72,7 +74,7 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
+    //m_lift.setDefaultCommand(new RunCommand(() -> m_lift.ready(), m_lift));
 
         
     
@@ -89,10 +91,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    //new JoystickButton(m_driverController, Button.kR1.value)
+        //.whileTrue(new RunCommand(
+            //() -> m_winch.winchout(), m_winch));
 
     new JoystickButton(m_operatorController, Button.kSquare.value) //y button
         .whileTrue(new RunCommand(() -> m_lift.placeL3(), m_lift));
@@ -106,14 +107,14 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, Button.kCross.value) //b button
         .whileTrue(new RunCommand(() -> m_lift.placeL1(), m_lift));
 
-    new JoystickButton(m_driverController, Button.kL1.value)
-        .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
+    //new JoystickButton(m_driverController, Button.kL1.value)
+        //.whileTrue(new RunCommand(() -> m_winch.winchin(), m_winch));
 
     new JoystickButton(m_driverController, Button.kTriangle.value) //x button
-        .whileTrue(new RunCommand(() -> m_lift.LetGo(), m_lift));
+        .whileTrue(new RunCommand(() -> m_lift.ready(), m_lift));
 
     new JoystickButton(m_driverController, Button.kOptions.value)
-        .whileTrue(new RunCommand(() -> m_lift.ResetArm(), m_lift));
+        .whileTrue(new RunCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive));
 
     new JoystickButton(m_driverController, Button.kSquare.value) //y button
         .whileTrue(new RunCommand(() -> m_lift.pickup(), m_lift));
@@ -126,6 +127,13 @@ public class RobotContainer {
         
     new JoystickButton(m_operatorController, Button.kL1.value)
         .whileTrue(new RunCommand(() -> m_lift.LetGo(), m_lift));
+
+    new JoystickButton(m_driverController, Button.kL1.value)
+        .whileTrue(new RunCommand(() -> m_winch.extendClimb(), m_winch));
+
+    new JoystickButton(m_driverController, Button.kR1.value)
+        .whileTrue(new RunCommand(() -> m_winch.retractClimb(), m_winch));
+            
   }
 
   /**
@@ -177,6 +185,6 @@ public class RobotContainer {
     // This method loads the auto when it is called, however, it is recommended
     // to first load your paths/autos when code starts, then return the
     // pre-loaded auto/path
-    return m_robotDrive.getAutonomousCommand("New Auto");
+    return m_robotDrive.getAutonomousCommand("TestAuto");
   }
 }

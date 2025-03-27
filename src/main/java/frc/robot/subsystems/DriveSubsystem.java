@@ -31,7 +31,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import frc.robot.subsystems.procam;
+
 public class DriveSubsystem extends SubsystemBase {
+  
+  private final procam m_vision = new procam();
+
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -73,8 +78,6 @@ public class DriveSubsystem extends SubsystemBase {
     setupPathPlanner();
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-
-    
   }
 
   @Override
@@ -101,13 +104,32 @@ public class DriveSubsystem extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public double xdrive() {
+    //use area (20% max) getting larger with a voltage offset
+    if (m_vision.area() < 20) {
+      return 0.75;
+    } else {
+      return 0;
+    }
+  }
+/*
+  public double ydrive() {
+    //use 
+    return
+  }
+
+  public double rot() {
+    //use x to align with a voltage offset (Tx is -35 - 35deg) (Ty is 0-45deg)
+    return
+  }
+*/
   public ChassisSpeeds getRobotRelativeSpeeds(){
     return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
-}
+  }
 
   public void driveRobotRelative(ChassisSpeeds speeds){
     drive(speeds, false);
-}
+  }
 
 public SwerveModuleState[] getModuleStates(){
   return new SwerveModuleState[]{
@@ -287,3 +309,4 @@ public SwerveModuleState[] getModuleStates(){
                                      );
   }
 }
+

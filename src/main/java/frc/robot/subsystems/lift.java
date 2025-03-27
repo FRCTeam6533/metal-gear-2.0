@@ -10,11 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.thethriftybot.ThriftyNova;
-import com.thethriftybot.ThriftyNova.CurrentType;
-import com.thethriftybot.ThriftyNova.EncoderType;
-import com.thethriftybot.ThriftyNova.PIDSlot;
-
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -31,7 +26,7 @@ public class lift extends SubsystemBase {
   /** Creates a new lift. */
   private final SparkMax m_lift1;
   private final SparkMax m_lift2;
-  private final ThriftyNova m_intake;
+  private final SparkMax m_intake;
   private final SparkMax m_arm;
   private final SparkMax m_wrist;
   
@@ -39,73 +34,51 @@ public class lift extends SubsystemBase {
   private final RelativeEncoder m_lift2Encoder;
   private final RelativeEncoder m_armEncoder;
   private final RelativeEncoder m_wristEncoder;
+  private final RelativeEncoder m_intEncoder;
   
   private final SparkClosedLoopController m_lift1Controller;
   private final SparkClosedLoopController m_lift2Controller;
   private final SparkClosedLoopController m_armController;
   private final SparkClosedLoopController m_wristController;
+  private final SparkClosedLoopController m_intController;
   
   private SparkMaxConfig lift1Config;
   private SparkMaxConfig lift2Config;
   private SparkMaxConfig armConfig;
   private SparkMaxConfig wristConfig;
+  private SparkMaxConfig intakeConfig;
   
   public lift() { 
   
-  m_intake = new ThriftyNova(4);
-    m_intake.setBrakeMode(true); // brake mode
-    m_intake.setInverted(false); // not inverted 
-    m_intake.setRampUp(0.25);    // 1/4 second ramp up
-    m_intake.setRampDown(0.25);  // tiny ramp dowm
-    m_intake.setMaxOutput(.25, .25);  // full power for forward because the 
-                              // system is fighting against gravity
-                              // limits power on reverse because the 
-                              // system is falling with gravity
-                              
-    //m_intake.setSoftLimits(0, 2000); // constrain the motor [0, 4pi]
-    //m_intake.enableSoftLimits(true);       // enable the soft limits   
-    m_intake.setMaxCurrent(CurrentType.SUPPLY, 50); // set a 50amp current limit
-                                             // on supply side
-      
-    m_intake.useEncoderType(EncoderType.INTERNAL); // use internal NEO encoder
-    m_intake.usePIDSlot(PIDSlot.SLOT0);           // use the first PID slot
-      
-    // Configure the first PID slot
-    m_intake.pid0.setP(0.01); 
-    m_intake.pid0.setD(0);
-
-  // Iterate through errors and check them
-  for (var err : m_intake.getErrors()) {
-    // The user can handle the errors
-      System.err.println(err.toString());
-    }
-    // Clear errors here
-    m_intake.clearErrors();
-
     m_lift1 = new SparkMax(6, MotorType.kBrushless);
     m_lift2 = new SparkMax(7, MotorType.kBrushless);
     m_arm = new SparkMax(2, MotorType.kBrushless);
     m_wrist = new SparkMax(3, MotorType.kBrushless);
+    m_intake = new SparkMax(4, MotorType.kBrushless);
 
     m_lift1Controller = m_lift1.getClosedLoopController();
     m_lift2Controller = m_lift2.getClosedLoopController();
-    m_armController = m_arm.getClosedLoopController(); 
+    m_armController = m_arm.getClosedLoopController();
     m_wristController = m_wrist.getClosedLoopController();
+    m_intController = m_intake.getClosedLoopController();
 
     m_lift1Encoder = m_lift1.getEncoder();
     m_lift2Encoder = m_lift2.getEncoder();
     m_armEncoder = m_arm.getEncoder();
     m_wristEncoder = m_wrist.getEncoder();
-
+    m_intEncoder = m_intake.getEncoder();
+    
     lift1Config = new SparkMaxConfig();
     lift2Config = new SparkMaxConfig();
     armConfig = new SparkMaxConfig();
     wristConfig = new SparkMaxConfig();
+    intakeConfig = new SparkMaxConfig();
 
     lift1Config.encoder.positionConversionFactor(1);
     lift2Config.encoder.positionConversionFactor(1);
     armConfig.encoder.positionConversionFactor(1); 
     wristConfig.encoder.positionConversionFactor(1);  
+    intakeConfig.encoder.positionConversionFactor(1);
 
     lift1Config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -139,11 +112,21 @@ public class lift extends SubsystemBase {
         .i(0)
         .d(0)
         .outputRange(-1, 1);
+
+        intakeConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        // Set PID values for position control. We don't need to pass a closed loop
+        // slot, as it will default to slot 0.
+        .p(0.01)
+        .i(0)
+        .d(0)
+        .outputRange(-.5, .5);
   
     m_lift1.configure(lift1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     m_lift2.configure(lift2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     m_arm.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_intake.configure(intakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
   }
 
@@ -155,16 +138,20 @@ public class lift extends SubsystemBase {
   }
 
   public void ResetIntake() {
-    m_intake.setEncoderPosition(0);
+    m_intEncoder.setPosition(0);
   }
 
   public void Intake() {
-    m_intake.set(.35);
+    m_intake.set(.25);
   }
 
   public void LetGo() {
     //m_intake.set(-.25);
     Wrist(getWrist()-10);
+  }
+
+  public void releaseAlgae() {
+    m_intake.set(-.35);
   }
 
   public void stopIntake() {
@@ -196,7 +183,7 @@ public class lift extends SubsystemBase {
   }
 
   public double getIntake() {
-    return m_intake.getPosition();
+    return m_intEncoder.getPosition();
   }
 
   public void Pick() {
@@ -218,7 +205,7 @@ public class lift extends SubsystemBase {
     Liftheight(47);
     if (getheight() > 17) ArmAng(-62);
     if (getheight() > 17) Wrist(-50);
-    if (getArm() < 59 && getWrist() < -47) LetGo();
+    //if (getArm() < 59 && getWrist() < -47) LetGo();
   }
 
   public void placeL3() {
@@ -252,17 +239,18 @@ public class lift extends SubsystemBase {
   }
 
   public void clearLowAlgae() {
-    Liftheight(0);
-    ArmAng(-64);
-    Wrist(-42);
-    LetGo();
+    Liftheight(20);
+    if (getheight() > 17) ArmAng(-64);
+    if (getheight() > 17) Wrist(-42);
+    if (getArm() < -50) Liftheight(0);
+    releaseAlgae();
   }
 
   public void clearHighAlgae() {
     Liftheight(28);
     ArmAng(-64);
     Wrist(-42);
-    LetGo();
+    releaseAlgae();
   }
 
   public void ResetArm() {
@@ -279,7 +267,7 @@ public class lift extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm angle", getArm());
     SmartDashboard.putNumber("Wrist angle", getWrist());
-    //SmartDashboard.putNumber("Intake", getIntake());
+    SmartDashboard.putNumber("Intake", getIntake());
     //SmartDashboard.putBoolean("LiftP", m_lift1.pid0.setP)
     }
 

@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
+import frc.robot.Constants.VisionConstants;
+
 public class procam extends SubsystemBase {
   /** Creates a new procam. */
 
@@ -24,8 +26,13 @@ public class procam extends SubsystemBase {
     
   
   }
+
+  public boolean getTV(){
+    return LimelightHelpers.getTV(VisionConstants.LIMELIGHT_NAME);
+  }
+
 public double xoff() { 
-return tx; 
+return tx;
 
 }
  public double yoff() {
